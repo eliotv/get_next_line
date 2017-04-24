@@ -12,62 +12,65 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-int read_file_bytes(int const fd, char **file)
+void strjoin_free(char *buff, char **str_read)
 {
-	char buff[BUFF_SIZE + 1];
-	int	byte_count;
-	char *nstr;
-
-	ft_bzero(buff, BUFF_SIZE + 1);
-	printf("1");
-	byte_count = read(fd, buff, BUFF_SIZE);
-	printf("2");
-	buff[byte_count] = '\0';
-	printf("3");
-	if (byte_count > 0)
-	{
-		nstr = ft_strjoin(*file, buff);
-		if (!nstr)
-			return (-1);
-		free (*file);
-		printf("4");
-		*file = nstr;
-		printf("5");
-	}
-	printf("6");
-	return (byte_count);
+	char *tmp;
+	tmp = ft_strjoin(&buff, *str_read);
+	ft_bzero(&buff, BUFF_SIZE + 1);
+	free(*str_read);
+	*str_read = tmp;
 }
 
-int get_next_line(int const fd, char **line)
+
+void str_read(char *buff, char **str_read)
 {
-	static char *str;
-	char *newline_index;
-	int  ret;
-
-	if (fd < 0 || read(0, str, 0) < 0 || !line)
-		return (-1);
-	if (!str)
-		str = (char *)ft_memalloc(sizeof(char));
-	//while (!(newline_index = ft_strchr(str, '\n')))
-	while (ret == read_file_bytes(fd, &str) > 0)
+	if (*str_read == 0)
 	{
-
-		newline_index = ft_strchr(str, '\n');
-		/*ret = read_file_bytes(fd, &str);
-		if (ret == 0 && !newline_index)*/
-		if (str[0] == 0) 
-			return (0);
-		*line = str;
-		str = NULL;
-		return (1);	
+		*str_read = strdup(&buff);
+		ft_bzero(&buff, BUFF_SIZE + 1);
+		return ;
 	}
-	if (ret < 0)
-		return (-1);
-	*line = ft_strsub(str, 0, newline_index - str);
-	if (!*line)
-		return (-1);
-	newline_index = ft_strdup(newline_index + 1);
-	free(str);
-	str = newline_index;
+	strjoin_free(buff, str_read);
+}
+
+int end_line(char **str_read, char **line)
+{
+	size_t str_len;
+	str_len = ft_strlen(*str_read);
+	*line = strdup(*str_read);
+	ft_bzero(*str_read, str_len);
 	return (1);
+}
+
+int set_line(char **str_read, char **file_line, size_t len)
+{
+	*file_line = strdup(*str_read);
+	*str_read = ft_memmove(*str_read, *str_read + len + 1, ft_strlen(*str_read));
+	return (1);
+}
+
+int get_next_line(const int fd, char **line)
+{
+	char buff[BUFF_SIZE + 1];
+	char tmp;
+	int bytes_read;
+	static char str_from_file;
+
+	if (fd < 0 || !*line || BUFF_SIZE <= 0)
+		return (-1);
+	ft_bzero(buff, BUFF_SIZE + 1);
+	while ((bytes_read = read(0, buff, BUFF_SIZE)) != 0)
+	{
+		str_read(buff, &str_from_file);
+		if ((tmp = ft_strchr(str_from_file, '\n')) != 0)
+			return (set_line(str_from_file, line, tmp - str_from_file));
+	}
+	if(!str_from_file)
+		return (0);
+	else if ((tmp = ft_strchr(str_from_file, '\n')) != 0)
+		return (set_line(str_from_file, line, tmp - str_from_file));
+	else if (ft_strlen(str_from_file) > 0)
+		return (end_line(str_from_file, line));
+	ft_strdel(&str_from_file);
+	return (0);
 }
