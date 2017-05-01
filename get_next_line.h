@@ -12,11 +12,20 @@
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-#include "/nfs/2017/e/evanheum/get_next_line/libft/libft.h"
+#include "libft/libft.h"
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#define BUFF_SIZE 16 
+#define FD_MAX 4864
 
-#define BUFF_SIZE 16
-int get_next_line(int const fd, char **line);
+typedef struct		gnl_val
+{
+	char *str[FD_MAX];
+	char *tmp;
+	int  byte_c;
+}					t_gnl;
+int get_next_line(const int fd, char **line);
 
 #endif
