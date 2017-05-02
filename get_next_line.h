@@ -3,31 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: evanheum <evanheum@student.us.org>         +#+  +:+       +#+        */
+/*   By: evanheum <evanheum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/17 17:16:12 by evanheum          #+#    #+#             */
-/*   Updated: 2017/04/17 18:18:42 by evanheum         ###   ########.fr       */
+/*   Updated: 2017/05/02 14:37:12 by evanheum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-#include "libft/libft.h"
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#define BUFF_SIZE 1000
-#define FD_MAX 4864
+# define BUFF_SIZE 16
+# define FD_MAX 4864
+# include "libft/libft.h"
+# include <fcntl.h>
 
-typedef struct		gnl_val
-{
-	char buff[BUFF_SIZE + 1];
-	char *str[FD_MAX];
-	char *tmp;
-	char *newline;
-	int  byte_c;
-}					t_gnl;
-int get_next_line(const int fd, char **line);
+int					get_next_line(const int fd, char **line);
 
 #endif
