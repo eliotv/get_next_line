@@ -17,13 +17,15 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-#define BUFF_SIZE 16 
+#define BUFF_SIZE 1000
 #define FD_MAX 4864
 
 typedef struct		gnl_val
 {
+	char buff[BUFF_SIZE + 1];
 	char *str[FD_MAX];
 	char *tmp;
+	char *newline;
 	int  byte_c;
 }					t_gnl;
 int get_next_line(const int fd, char **line);
