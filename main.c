@@ -31,7 +31,6 @@ int	main(int ac, char **av)
 	{
 		++i;
 		ft_putendl(line);
-		free(line);
 	}
 	printf("i = %d\n", i);
 	if (ac == 2)
