@@ -12,20 +12,23 @@
 
 #include "get_next_line.h"
 
-int				nl_search(const int fd, char **str, char **line)
+int				nl_search(char **str, char **line)
 {
 	char *newline;
+	char *tmp;
 
-	while ((newline = ft_strchr(str[fd], '\n')))
+	while ((newline = ft_strchr(*str, '\n')))
 	{
-		*line = ft_strndup(str[fd], (newline - str[fd]));
-		str[fd] = newline + 1;
+		*line = ft_strndup(*str, (newline - *str));
+		tmp = ft_strdup(newline + 1);
+		free(*str);
+		*str = tmp;
 		return (1);
 	}
-	if (*(str[fd]))
+	if (**str)
 	{
-		*line = ft_strdup(str[fd]);
-		ft_bzero(str[fd], ft_strlen(str[fd]));
+		*line = ft_strdup(*str);
+		ft_bzero(*str, ft_strlen(*str));
 		return (1);
 	}
 	return (0);
@@ -38,11 +41,13 @@ int				get_next_line(const int fd, char **line)
 	char		*tmp;
 	int			byte_c;
 
+	if (fd < 0 || !line || BUFF_SIZE <= 0 || read(fd, buff, 0) < 0)
+		return (-1);
 	while ((byte_c = read(fd, buff, BUFF_SIZE)) != 0)
 	{
-		buff[byte_c] = '\0';
 		if (byte_c == -1)
 			return (-1);
+		buff[byte_c] = '\0';
 		if (!str[fd])
 			str[fd] = ft_strdup(buff);
 		else
@@ -52,5 +57,7 @@ int				get_next_line(const int fd, char **line)
 			str[fd] = tmp;
 		}
 	}
-	return (nl_search(fd, str, line));
+	if (ft_strlen(str[fd]) > 0)
+		return (nl_search(&str[fd], line));
+	return (0);
 }
